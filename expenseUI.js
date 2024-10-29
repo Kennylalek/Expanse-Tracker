@@ -14,6 +14,9 @@ class expenseUI {
 
     this.event();
     this.loadInitialExpenses();
+
+    this.addRowSelectionListener();
+    this.addDeleteButtonListner();
   }
 
   event() {
@@ -72,6 +75,41 @@ class expenseUI {
     this.expenseInput.value = "";
     this.priceInput.value = "";
   }
+  // delete selected row
+
+    deleteSelectedRow() {
+    const selectedRow = document.querySelector('tr.selected');
+    if (selectedRow) {
+      const expenseId = selectedRow.dataset.expenseId;
+      const expenseItem = this.expenseManager.getExpenses()[expenseId];
+      this.expenseManager.updateTotal(expenseItem.price, "subtract");
+      this.expenseManager.getExpenses().splice(expenseId, 1);
+      selectedRow.remove();
+      this.updateTotalUI();
+    } else {
+      alert('Please select the expense to be deleted first.');
+    }
+  }
+
+// Add click event listener to each row for selection
+   addRowSelectionListener(){
+    this.expenseTable.addEventListener('click', (event) => {
+      const rows = this.expenseTable.getElementsByTagName('tr');
+      for (let i = 0; i < rows.length; i++) {
+          rows[i].classList.remove('selected');
+      }
+      event.target.parentNode.classList.add('selected');
+  });
+   }
+ 
+
+// Add delete button event listener
+   addDeleteButtonListner(){
+    const deleteExpenseBtn = document.getElementById('deletebtn');
+    deleteExpenseBtn.addEventListener('click', ()=>this.deleteSelectedRow());
+    
+   }
+
 }
 
 new expenseUI();
