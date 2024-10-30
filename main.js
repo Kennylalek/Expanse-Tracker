@@ -73,6 +73,26 @@ app.whenReady().then(() => {
         });
     });
 
+    ipcMain.handle('get-expenses-month-year', async (event, month, year) => {
+        return new Promise((resolve, reject) => {
+          let query = 'SELECT * FROM expenses';
+          const params = [];
+      
+          if (month && year) {
+            query += ' WHERE strftime("%m", date) = ? AND strftime("%Y", date) = ?';
+            params.push(month.toString().padStart(2, '0'), year.toString());
+          }
+      
+          db.all(query, params, (err, rows) => {
+            if (err) {
+              return reject(err);
+            }
+            resolve(rows);
+          });
+        });
+      });
+      
+
     ipcMain.handle('delete-expense', async (event, id) => {
         return new Promise((resolve, reject) => {
             db.run('DELETE FROM expenses WHERE id = ?', id, function(err) {

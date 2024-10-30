@@ -60,6 +60,15 @@ class ManageExpense {
   getTotal() {
     return this.total;
   }
+
+  async getExpensesByMonthAndYear(month, year) {
+    const expenses = await window.electron.getExpensesMY();
+    
+    return expenses.filter(expense => {
+      const [expenseYear, expenseMonth] = expense.date.split('-').map(Number);
+      return expenseYear === year && expenseMonth === month;
+    });
+  }
 }
 
 export default ManageExpense;

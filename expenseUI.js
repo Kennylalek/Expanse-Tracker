@@ -14,6 +14,12 @@ class ExpenseUI {
 
     this.dateInput.value = new Date().toISOString().split('T')[0];
 
+    this.filterMonthInput = document.getElementById("filterMonth");
+    this.filterYearInput = document.getElementById("filterYear");
+    this.filterButton = document.getElementById("filterButton");
+
+    this.addFilterButtonListener();
+
 
     this.event();
     this.loadExpenses();
@@ -26,6 +32,12 @@ class ExpenseUI {
       this.addExpenseUI();
     });
   }
+
+  addFilterButtonListener() {
+    this.filterButton.addEventListener("click", () => this.filterExpensesByMonthAndYear());
+  }
+
+  
 
   async loadExpenses() {
     const expenses = await this.expenseManager.getExpenses();
@@ -109,6 +121,26 @@ class ExpenseUI {
   addDeleteButtonListener() {
     const deleteExpenseBtn = document.getElementById("deletebtn");
     deleteExpenseBtn.addEventListener("click", () => this.deleteSelectedRow());
+  }
+
+  async filterExpensesByMonthAndYear() {
+    const month = parseInt(this.filterMonthInput.value.trim());
+    const year = parseInt(this.filterYearInput.value.trim());
+  
+    if (isNaN(month) || month < 1 || month > 12) {
+      alert("Please enter a valid month (1-12).");
+      return;
+    }
+  
+    if (isNaN(year) || year < 1900 || year > 2100) {
+      alert("Please enter a valid year.");
+      return;
+    }
+  
+    const filteredExpenses = await this.expenseManager.getExpensesByMonthAndYear(month, year);
+    this.expenseTable.innerHTML = ""; // Clear existing rows
+    filteredExpenses.forEach(expense => this.addExpenseToTable(expense));
+    this.updateTotalUI();
   }
 }
 
