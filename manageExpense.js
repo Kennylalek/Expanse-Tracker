@@ -3,7 +3,7 @@ class ManageExpense {
     this.total = 0;
   }
 
-  async addExpense(name, price) {
+  async addExpense(name, price, date) {
     try {
       if (typeof name !== "string" || name.trim() === "") {
         throw new Error("Expense name must be a valid non-empty string.");
@@ -18,7 +18,7 @@ class ManageExpense {
         throw new Error(`Price cannot exceed ${MAX_PRICE}.`);
       }
 
-      const newExpense = await window.electron.addExpense(name, price);
+      const newExpense = await window.electron.addExpense(name, price, date);
       this.updateTotal(price, "add");
 
       return newExpense;

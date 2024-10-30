@@ -10,6 +10,10 @@ class ExpenseUI {
     this.addExpenseButton = document.getElementById("addExpenseBtn");
     this.expenseInput = document.getElementById("expense");
     this.priceInput = document.getElementById("price");
+    this.dateInput = document.getElementById("expenseDate");
+
+    this.dateInput.value = new Date().toISOString().split('T')[0];
+
 
     this.event();
     this.loadExpenses();
@@ -32,9 +36,10 @@ class ExpenseUI {
   async addExpenseUI() {
     const expenseName = this.expenseInput.value.trim();
     const expensePrice = parseFloat(this.priceInput.value.trim());
+    const date = Date(this.dateInput.value);
 
     if (expenseName && !isNaN(expensePrice)) {
-      const newExpense = await this.expenseManager.addExpense(expenseName, expensePrice);
+      const newExpense = await this.expenseManager.addExpense(expenseName, expensePrice, date);
       this.addExpenseToTable(newExpense);
       this.clearInputFields();
       this.updateTotalUI();
@@ -52,6 +57,10 @@ class ExpenseUI {
     const priceCell = document.createElement("td");
     priceCell.innerText = expense.price.toFixed(2);
     newRow.appendChild(priceCell);
+
+    const dateCell = document.createElement("td");
+    dateCell.innerText = expense.date;
+    newRow.appendChild(dateCell);
 
     const deleteBtnCell = document.createElement("td");
     deleteBtnCell.classList.add("deleteCell");

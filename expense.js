@@ -1,7 +1,8 @@
 class expense {
-  constructor(Name, Price) {
+  constructor(Name, Price, Date) {
     this.name = Name;
     this.price = Price;
+    this.date = Date;
   }
 }
 

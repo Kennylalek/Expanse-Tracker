@@ -59,3 +59,7 @@ th, td {
 th {
     text-align: center;
 }
+
+#expenseDate {
+    width: 80px !important;
+}
