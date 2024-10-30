@@ -31,7 +31,7 @@ app.whenReady().then(() => {
                   id INTEGER PRIMARY KEY AUTOINCREMENT,
                   name TEXT NOT NULL,
                   price REAL NOT NULL,
-                  date TEXT NOT NULL
+                  date TEXT NOT NULL -- Store as ISO 8601 string (YYYY-MM-DD);
                 )
             `, (err) => {
                 if (err) {

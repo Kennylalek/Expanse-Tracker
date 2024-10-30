@@ -36,7 +36,7 @@ class ExpenseUI {
   async addExpenseUI() {
     const expenseName = this.expenseInput.value.trim();
     const expensePrice = parseFloat(this.priceInput.value.trim());
-    const date = Date(this.dateInput.value);
+    const date = this.dateInput.value || new Date().toISOString().split('T')[0];
 
     if (expenseName && !isNaN(expensePrice)) {
       const newExpense = await this.expenseManager.addExpense(expenseName, expensePrice, date);
@@ -59,7 +59,8 @@ class ExpenseUI {
     newRow.appendChild(priceCell);
 
     const dateCell = document.createElement("td");
-    dateCell.innerText = expense.date;
+    const [year, month, day] = expense.date.split('-'); // Format date to DD/MM/YYYY
+    dateCell.innerText = `${day}/${month}/${year}`;
     newRow.appendChild(dateCell);
 
     const deleteBtnCell = document.createElement("td");
