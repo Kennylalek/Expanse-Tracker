@@ -1,71 +1,60 @@
-import Expense from "./expense.js";
-
-
-
-class manageExpense {
+class ManageExpense {
   constructor() {
-    this.expenses = [];
     this.total = 0;
   }
 
-  addExpense(Name, Price) {     
+  async addExpense(name, price) {
     try {
-        
-        if (typeof Name !== "string" || Name.trim() === "") {
-            throw new Error("Expense name must be a valid non-empty string.");
-        }
+      if (typeof name !== "string" || name.trim() === "") {
+        throw new Error("Expense name must be a valid non-empty string.");
+      }
 
-        
-        if (typeof Price !== "number") {
-            throw new Error("Price must be a number.");
-        }
+      if (typeof price !== "number" || price <= 0) {
+        throw new Error("Price must be a positive number.");
+      }
 
-        
-        if (Price < 0) {
-            throw new Error("Price cannot be negative.");
-        }
-        if (Price === 0) {
-            throw new Error("Price cannot be zero.");
-        }
+      const MAX_PRICE = 10000;
+      if (price > MAX_PRICE) {
+        throw new Error(`Price cannot exceed ${MAX_PRICE}.`);
+      }
 
-       
-        const MAX_PRICE = 10000;
-        if (Price > MAX_PRICE) {
-            throw new Error(`Price cannot exceed ${MAX_PRICE}.`);
-        }
+      const newExpense = await window.electron.addExpense(name, price);
+      this.updateTotal(price, "add");
 
-        
-        const newExpense = new Expense(Name, Price);
-        this.expenses.push(newExpense);
-        this.updateTotal(Price, "add");
-
-       
-        document.getElementById("expense").value = "";
-        document.getElementById("price").value = "";
-        
-        return newExpense;
-
+      return newExpense;
     } catch (error) {
-        alert(error.message); 
-        
-        
-        document.getElementById("price").focus();
-        document.getElementById("price").value = "";
-    }
-}
-
-
-
-  updateTotal(amount, operation) {
-    if (operation == "add") {
-      this.total += amount;
-    } else if (operation == "subtract") {
-      this.total -= amount;
+      alert(error.message);
+      throw error; // Rethrow for handling in UI
     }
   }
 
-  getExpenses() {
-    return this.expenses;
+  async getExpenses() {
+    const expenses = await window.electron.getExpenses();
+    let t = 0;
+
+    for (let i = 0; i < expenses.length; i++) {
+      t += expenses[i].price;
+    }
+    this.total = t;
+    return expenses;
+  }
+
+  async deleteExpense(id) {
+    const expenses = await this.getExpenses();
+    const expenseToDelete = expenses.find(exp => exp.id === id);
+
+    if (expenseToDelete) {
+      await window.electron.deleteExpense(id);
+      this.updateTotal(expenseToDelete.price, "subtract");
+    }
+  }
+
+  updateTotal(amount = 0, operation) {
+    if (operation === "add") {
+      this.total += amount;
+    } else if (operation === "subtract") {
+      this.total -= amount;
+    }
   }
 
   getTotal() {
@@ -73,4 +62,4 @@ class manageExpense {
   }
 }
 
-export default manageExpense;
+export default ManageExpense;

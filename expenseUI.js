@@ -1,9 +1,8 @@
-import manageExpense from "./manageExpense.js";
+import ManageExpense from "./manageExpense.js";
 
-console.log("first");
-class expenseUI {
+class ExpenseUI {
   constructor() {
-    this.expenseManager = new manageExpense();
+    this.expenseManager = new ManageExpense();
     this.expenseTable = document
       .getElementById("expenseTable")
       .getElementsByTagName("tbody")[0];
@@ -13,10 +12,9 @@ class expenseUI {
     this.priceInput = document.getElementById("price");
 
     this.event();
-    this.loadInitialExpenses();
-
+    this.loadExpenses();
     this.addRowSelectionListener();
-    this.addDeleteButtonListner();
+    this.addDeleteButtonListener();
   }
 
   event() {
@@ -25,44 +23,44 @@ class expenseUI {
     });
   }
 
-  loadInitialExpenses() {
-    [
-      { name: "Veg", price: 40.0 },
-      { name: "Fruit", price: 70.0 },
-      { name: "Fuel", price: 60.0 },
-    ].forEach((expense) => this.addExpenseUI(expense.name, expense.price));
+  async loadExpenses() {
+    const expenses = await this.expenseManager.getExpenses();
+    expenses.forEach(expense => this.addExpenseToTable(expense));
+    this.updateTotalUI();
   }
 
-  addExpenseUI(name = null, price = null) {
-    const expenseName = name || this.expenseInput.value.trim();
-    const expensePrice = price || parseFloat(this.priceInput.value.trim());
+  async addExpenseUI() {
+    const expenseName = this.expenseInput.value.trim();
+    const expensePrice = parseFloat(this.priceInput.value.trim());
 
     if (expenseName && !isNaN(expensePrice)) {
-      const newExpenseItem = this.expenseManager.addExpense(
-        //add it to the list
-        expenseName,
-        expensePrice
-      );
-
-      this.addExpenseToTable(newExpenseItem);
+      const newExpense = await this.expenseManager.addExpense(expenseName, expensePrice);
+      this.addExpenseToTable(newExpense);
       this.clearInputFields();
-      this.updateTotalUI(); //in ui
+      this.updateTotalUI();
     }
   }
 
-  addExpenseToTable(expenseItem) {
+  addExpenseToTable(expense) {
     const newRow = document.createElement("tr");
-    newRow.dataset.expenseId = this.expenseManager
-      .getExpenses()
-      .indexOf(expenseItem);
+    newRow.dataset.expenseId = expense.id;
 
     const expenseCell = document.createElement("td");
-    expenseCell.innerText = expenseItem.name;
+    expenseCell.innerText = expense.name;
     newRow.appendChild(expenseCell);
 
     const priceCell = document.createElement("td");
-    priceCell.innerText = expenseItem.price.toFixed(2);
+    priceCell.innerText = expense.price.toFixed(2);
     newRow.appendChild(priceCell);
+
+    const deleteBtnCell = document.createElement("td");
+    deleteBtnCell.classList.add("deleteCell");
+    const button = document.createElement("button");
+    button.classList.add("deleteBtn");
+    button.innerHTML = "Delete";
+    button.addEventListener("click", () => this.deleteSelectedRow(button));
+    deleteBtnCell.appendChild(button);
+    newRow.appendChild(deleteBtnCell);
 
     this.expenseTable.appendChild(newRow);
   }
@@ -75,41 +73,33 @@ class expenseUI {
     this.expenseInput.value = "";
     this.priceInput.value = "";
   }
-  // delete selected row
 
-    deleteSelectedRow() {
-    const selectedRow = document.querySelector('tr.selected');
+  async deleteSelectedRow(button) {
+    const selectedRow = button.parentNode.parentNode;
     if (selectedRow) {
       const expenseId = selectedRow.dataset.expenseId;
-      const expenseItem = this.expenseManager.getExpenses()[expenseId];
-      this.expenseManager.updateTotal(expenseItem.price, "subtract");
-      this.expenseManager.getExpenses().splice(expenseId, 1);
+      await this.expenseManager.deleteExpense(parseInt(expenseId));
       selectedRow.remove();
       this.updateTotalUI();
     } else {
-      alert('Please select the expense to be deleted first.');
+      alert("Please select the expense to be deleted first.");
     }
   }
 
-// Add click event listener to each row for selection
-   addRowSelectionListener(){
-    this.expenseTable.addEventListener('click', (event) => {
-      const rows = this.expenseTable.getElementsByTagName('tr');
+  addRowSelectionListener() {
+    this.expenseTable.addEventListener("click", (event) => {
+      const rows = this.expenseTable.getElementsByTagName("tr");
       for (let i = 0; i < rows.length; i++) {
-          rows[i].classList.remove('selected');
+        rows[i].classList.remove("selected");
       }
-      event.target.parentNode.classList.add('selected');
-  });
-   }
- 
+      event.target.parentNode.classList.add("selected");
+    });
+  }
 
-// Add delete button event listener
-   addDeleteButtonListner(){
-    const deleteExpenseBtn = document.getElementById('deletebtn');
-    deleteExpenseBtn.addEventListener('click', ()=>this.deleteSelectedRow());
-    
-   }
-
+  addDeleteButtonListener() {
+    const deleteExpenseBtn = document.getElementById("deletebtn");
+    deleteExpenseBtn.addEventListener("click", () => this.deleteSelectedRow());
+  }
 }
 
-new expenseUI();
+new ExpenseUI();

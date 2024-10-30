@@ -8,6 +8,8 @@
     "start": "electron ."
   },
   "dependencies": {
-    "electron": "^25.0.0"
+    "electron": "^25.0.0",
+    "sqlite-electron": "^3.1.1",
+    "sqlite3": "^5.1.7"
   }
 }
