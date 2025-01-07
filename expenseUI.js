@@ -126,6 +126,7 @@ class ExpenseUI {
   async deleteSelectedRow(button) {
     const selectedRow = button.parentNode.parentNode;
     if (selectedRow) {
+      console.log("heeeeere");
       const expenseId = selectedRow.dataset.expenseId;
       await this.expenseManager.deleteExpense(parseInt(expenseId));
       selectedRow.remove();

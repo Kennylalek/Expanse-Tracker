@@ -6,6 +6,10 @@ body {
 .container {
     max-width: 600px;
     margin: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .input-section {
@@ -34,6 +38,7 @@ th, td {
 
 .total {
     font-weight: bold;
+    margin: 15px 0;
 }
 
 .deleteBtn {
@@ -60,6 +65,14 @@ th {
     text-align: center;
 }
 
+.last {
+    width: 100px;
+}
+
+label {
+    margin-right: 5px;
+}
+
 #expenseDate {
-    width: 80px !important;
+    min-width: 120px !important;
 }

@@ -13,7 +13,7 @@ class ManageExpense {
         throw new Error("Price must be a positive number.");
       }
 
-      const MAX_PRICE = 10000;
+      const MAX_PRICE = 100000;
       if (price > MAX_PRICE) {
         throw new Error(`Price cannot exceed ${MAX_PRICE}.`);
       }
@@ -22,7 +22,8 @@ class ManageExpense {
       this.updateTotal(price, "add");
 
       return newExpense;
-    } catch (error) {
+    } 
+    catch (error) {
       alert(error.message);
       throw error; // Rethrow for handling in UI
     }

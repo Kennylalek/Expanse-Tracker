@@ -63,6 +63,7 @@ app.whenReady().then(() => {
       });
 
     ipcMain.handle('get-expenses', async () => {
+      console.log("expemses");
         return new Promise((resolve, reject) => {
             db.all('SELECT * FROM expenses', [], (err, rows) => {
                 if (err) {
