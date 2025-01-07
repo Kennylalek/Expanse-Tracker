@@ -39,7 +39,13 @@
 
     <input type="number" id="filterMonth" min="1" max="12" placeholder="Month (1-12)" />
     <input type="number" id="filterYear" min="1900" max="2100" placeholder="Year" />
+    
     <button id="filterButton">Filter</button>
+    <button id="exportPdfButton">Export as PDF</button>
+    
     <script src="expenseUI.js" type="module"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
   </body>
 </html>

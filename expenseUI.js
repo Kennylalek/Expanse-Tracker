@@ -1,5 +1,6 @@
 import ManageExpense from "./manageExpense.js";
 
+
 class ExpenseUI {
   constructor() {
     this.expenseManager = new ManageExpense();
@@ -17,6 +18,9 @@ class ExpenseUI {
     this.filterMonthInput = document.getElementById("filterMonth");
     this.filterYearInput = document.getElementById("filterYear");
     this.filterButton = document.getElementById("filterButton");
+
+    this.exportPdfButton = document.getElementById("exportPdfButton");
+    this.addExportButtonListener();
 
     this.addFilterButtonListener();
 
@@ -37,6 +41,29 @@ class ExpenseUI {
     this.filterButton.addEventListener("click", () => this.filterExpensesByMonthAndYear());
   }
 
+  addExportButtonListener() {
+    this.exportPdfButton.addEventListener("click", () => this.exportTableToPDF());
+  }
+  
+  async exportTableToPDF() {
+    const { jsPDF } = window.jspdf; // Ensure jsPDF is accessible
+    const doc = new jsPDF();
+  
+    const tableBody = Array.from(this.expenseTable.rows).map(row => {
+      return Array.from(row.cells).map(cell => cell.innerText);
+    });
+  
+    // Add table header
+    const headers = ["Name", "Price", "Date"];
+    doc.autoTable({
+      head: [headers],
+      body: tableBody,
+      startY: 10, // Vertical offset for the table
+    });
+  
+    // Save the generated PDF
+    doc.save("Expenses.pdf");
+  }
   
 
   async loadExpenses() {
